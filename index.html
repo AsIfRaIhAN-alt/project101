@@ -1,0 +1,968 @@
+
+<h2 class="sr-only">AnimalHub Smart Animal Welfare Management System — Interactive UI Prototype with multiple screens including Login, Citizen Dashboard, Report Incident, Case Tracking, Adoption Listing, and Admin Dashboard</h2>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Sora:wght@500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .ah-wrap {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--color-text-primary);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1rem 0 2rem;
+  }
+
+  .nav-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    padding-bottom: 0.75rem;
+  }
+
+  .nav-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 500;
+    padding: 5px 12px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .nav-btn.active, .nav-btn:hover {
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-primary);
+  }
+
+  .screen { display: none; }
+  .screen.visible { display: block; }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 16px;
+  }
+
+  .logo {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px; font-weight: 600;
+    color: #1D9E75;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .logo-dot {
+    width: 28px; height: 28px;
+    background: #E1F5EE;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  .user-pill {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--color-text-secondary);
+  }
+
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #9FE1CB;
+    color: #085041;
+    font-size: 12px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 12px;
+  }
+
+  .card-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px; margin-bottom: 12px;
+  }
+
+  .stat-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 12px 14px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px; font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px; color: var(--color-text-secondary);
+  }
+
+  .s-teal { color: #0F6E56; }
+  .s-amber { color: #BA7517; }
+  .s-coral { color: #993C1D; }
+  .s-blue { color: #185FA5; }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 500;
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+
+  .badge-teal { background: #E1F5EE; color: #0F6E56; }
+  .badge-amber { background: #FAEEDA; color: #854F0B; }
+  .badge-blue { background: #E6F1FB; color: #185FA5; }
+  .badge-coral { background: #FAECE7; color: #993C1D; }
+  .badge-green { background: #EAF3DE; color: #3B6D11; }
+  .badge-red { background: #FCEBEB; color: #A32D2D; }
+
+  .table-wrap table {
+    width: 100%; font-size: 13px; border-collapse: collapse;
+  }
+
+  .table-wrap th {
+    text-align: left; font-weight: 500;
+    font-size: 11px; color: var(--color-text-secondary);
+    padding: 6px 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  .table-wrap td {
+    padding: 9px 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  .table-wrap tr:last-child td { border-bottom: none; }
+
+  .form-group { margin-bottom: 14px; }
+
+  .form-label {
+    display: block; font-size: 12px; font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: 5px;
+  }
+
+  .form-input {
+    width: 100%; padding: 8px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    outline: none;
+  }
+
+  .form-input:focus {
+    border-color: #1D9E75;
+    box-shadow: 0 0 0 2px rgba(29,158,117,0.12);
+  }
+
+  select.form-input { cursor: pointer; }
+
+  textarea.form-input { resize: vertical; min-height: 80px; }
+
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    padding: 8px 20px;
+    background: #1D9E75;
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .btn-primary:hover { background: #0F6E56; }
+
+  .btn-outline {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    padding: 8px 20px;
+    background: transparent;
+    color: var(--color-text-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .btn-outline:hover { background: var(--color-background-secondary); }
+
+  .two-col {
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap: 14px;
+  }
+
+  .timeline-item {
+    display: flex; gap: 12px; margin-bottom: 14px;
+    align-items: flex-start;
+  }
+
+  .tl-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    margin-top: 4px; flex-shrink: 0;
+  }
+
+  .tl-dot.done { background: #1D9E75; }
+  .tl-dot.active { background: #EF9F27; }
+  .tl-dot.pending { background: var(--color-border-secondary); }
+
+  .tl-label { font-size: 13px; font-weight: 500; }
+  .tl-meta { font-size: 12px; color: var(--color-text-secondary); }
+
+  .animal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 12px;
+  }
+
+  .animal-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+  }
+
+  .animal-img {
+    height: 90px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+  }
+
+  .animal-body { padding: 10px 12px; }
+  .animal-name { font-weight: 500; font-size: 14px; margin-bottom: 3px; }
+  .animal-info { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; }
+
+  .login-wrap {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 480px;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+  }
+
+  .login-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    width: 360px;
+    max-width: 100%;
+  }
+
+  .login-logo {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px; font-weight: 600;
+    color: #1D9E75;
+    text-align: center; margin-bottom: 4px;
+  }
+
+  .login-sub {
+    font-size: 12px; color: var(--color-text-secondary);
+    text-align: center; margin-bottom: 24px;
+  }
+
+  .role-tabs {
+    display: flex; gap: 4px;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 3px; margin-bottom: 20px;
+  }
+
+  .role-tab {
+    flex: 1; padding: 5px;
+    font-size: 11px; font-weight: 500;
+    border: none; border-radius: 6px;
+    cursor: pointer; background: transparent;
+    color: var(--color-text-secondary);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .role-tab.active {
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .notif-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .notif-item:last-child { border-bottom: none; }
+
+  .notif-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    margin-top: 5px; flex-shrink: 0;
+  }
+
+  .screen-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: 10px;
+    padding: 4px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .priority-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .priority-high { background: #FCEBEB; color: #A32D2D; }
+  .priority-normal { background: #E6F1FB; color: #185FA5; }
+
+  .map-placeholder {
+    height: 140px;
+    background: #EAF3DE;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid #C0DD97;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 6px;
+    color: #3B6D11; font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .progress-bar-wrap {
+    background: var(--color-background-secondary);
+    border-radius: 999px; height: 6px; overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .progress-bar { height: 100%; border-radius: 999px; }
+
+  .section-divider {
+    font-family: 'Sora', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--color-text-secondary);
+    margin: 16px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .section-divider::after {
+    content: '';
+    flex: 1; height: 0.5px;
+    background: var(--color-border-tertiary);
+  }
+
+  .info-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; padding: 6px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .info-row:last-child { border-bottom: none; }
+  .info-row-label { color: var(--color-text-secondary); }
+</style>
+
+<div class="ah-wrap">
+
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+    <div style="font-family:'Sora',sans-serif; font-size:16px; font-weight:600;">
+      <span style="color:#1D9E75;">Animal</span>Hub — UI/UX Prototype
+    </div>
+    <div style="font-size:11px; color:var(--color-text-secondary);">SE 231 · Spring 2026 · Group 01</div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn active" onclick="showScreen('login')">01 Login</button>
+    <button class="nav-btn" onclick="showScreen('citizen')">02 Citizen Dashboard</button>
+    <button class="nav-btn" onclick="showScreen('report')">03 Report Incident</button>
+    <button class="nav-btn" onclick="showScreen('tracking')">04 Case Tracking</button>
+    <button class="nav-btn" onclick="showScreen('adoption')">05 Adoption Listing</button>
+    <button class="nav-btn" onclick="showScreen('admin')">06 Admin Dashboard</button>
+    <button class="nav-btn" onclick="showScreen('donate')">07 Donation</button>
+  </div>
+
+
+  <!-- SCREEN 1: LOGIN -->
+  <div class="screen visible" id="screen-login">
+    <div class="screen-label">Screen 01 — Login & Registration</div>
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-logo">🐾 AnimalHub</div>
+        <div class="login-sub">Smart Animal Welfare Management System</div>
+        <div class="role-tabs">
+          <button class="role-tab active">Citizen</button>
+          <button class="role-tab">NGO</button>
+          <button class="role-tab">Vet</button>
+          <button class="role-tab">Admin</button>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email address</label>
+          <input class="form-input" type="email" placeholder="you@example.com" value="asif@citizen.com" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="••••••••" value="••••••••" readonly>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--color-text-secondary); cursor:pointer;">
+            <input type="checkbox" checked> Remember me
+          </label>
+          <span style="font-size:12px; color:#1D9E75; cursor:pointer;">Forgot password?</span>
+        </div>
+        <button class="btn-primary" style="width:100%; margin-bottom:10px;" onclick="showScreen('citizen')">Sign In →</button>
+        <div style="text-align:center; font-size:12px; color:var(--color-text-secondary);">
+          No account? <span style="color:#1D9E75; cursor:pointer;">Register here</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px; padding:12px 14px; background:var(--color-background-secondary); border-radius:var(--border-radius-md); font-size:12px; color:var(--color-text-secondary);">
+      <strong style="color:var(--color-text-primary);">Navigation note:</strong> Role tabs switch between Citizen, NGO/Shelter, Veterinarian, and Admin login portals. Each role is redirected to their respective dashboard upon authentication.
+    </div>
+  </div>
+
+
+  <!-- SCREEN 2: CITIZEN DASHBOARD -->
+  <div class="screen" id="screen-citizen">
+    <div class="screen-label">Screen 02 — Citizen Dashboard</div>
+    <div class="topbar">
+      <div class="logo"><div class="logo-dot">🐾</div> AnimalHub</div>
+      <div style="display:flex; gap:8px; font-size:12px; color:var(--color-text-secondary);">
+        <span>Dashboard</span><span>·</span><span style="color:#1D9E75; cursor:pointer;">Report</span><span>·</span><span>Adoption</span>
+      </div>
+      <div class="user-pill"><div class="avatar">AR</div> Asif Raihan <span class="badge badge-teal">Citizen</span></div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num s-teal">3</div><div class="stat-label">My Reports</div></div>
+      <div class="stat-card"><div class="stat-num s-amber">1</div><div class="stat-label">In Rescue</div></div>
+      <div class="stat-card"><div class="stat-num s-blue">2</div><div class="stat-label">Resolved</div></div>
+      <div class="stat-card"><div class="stat-num s-coral">1</div><div class="stat-label">Pending</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">My Recent Reports</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Case ID</th><th>Animal</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:monospace;font-size:12px;">#AH-1042</td><td>Injured Dog</td><td><span class="badge badge-amber">In Rescue</span></td></tr>
+              <tr><td style="font-family:monospace;font-size:12px;">#AH-0987</td><td>Stray Cat</td><td><span class="badge badge-teal">Resolved</span></td></tr>
+              <tr><td style="font-family:monospace;font-size:12px;">#AH-0921</td><td>Injured Bird</td><td><span class="badge badge-teal">Resolved</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:8px;">
+          <button class="btn-primary" style="font-size:12px; padding:6px 14px;" onclick="showScreen('report')">+ New Report</button>
+          <button class="btn-outline" style="font-size:12px; padding:6px 14px;" onclick="showScreen('tracking')">Track Case</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Notifications</div>
+        <div class="notif-item">
+          <div class="notif-dot" style="background:#1D9E75;"></div>
+          <div><div style="font-size:13px;">Case #AH-1042 is now <strong>In Rescue</strong></div><div style="font-size:11px;color:var(--color-text-secondary);">2 hours ago</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot" style="background:#EF9F27;"></div>
+          <div><div style="font-size:13px;">Your adoption request is <strong>Pending Review</strong></div><div style="font-size:11px;color:var(--color-text-secondary);">1 day ago</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot" style="background:var(--color-border-secondary);"></div>
+          <div><div style="font-size:13px;">Case #AH-0987 has been <strong>Resolved</strong></div><div style="font-size:11px;color:var(--color-text-secondary);">3 days ago</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Quick Actions</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn-primary" style="font-size:13px;" onclick="showScreen('report')">🚨 Report Incident</button>
+        <button class="btn-outline" style="font-size:13px;" onclick="showScreen('tracking')">🔍 Track Case</button>
+        <button class="btn-outline" style="font-size:13px;" onclick="showScreen('adoption')">🐾 View Adoptions</button>
+        <button class="btn-outline" style="font-size:13px;" onclick="showScreen('donate')">💚 Donate</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SCREEN 3: REPORT INCIDENT -->
+  <div class="screen" id="screen-report">
+    <div class="screen-label">Screen 03 — Report Animal Incident</div>
+    <div class="topbar">
+      <div class="logo"><div class="logo-dot">🐾</div> AnimalHub</div>
+      <div style="font-size:13px; color:var(--color-text-secondary);">Report Incident</div>
+      <div class="user-pill"><div class="avatar">AR</div> Asif Raihan</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title">Incident Details</div>
+          <div class="form-group">
+            <label class="form-label">Animal Type</label>
+            <select class="form-input">
+              <option>Dog</option><option>Cat</option><option>Bird</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Condition</label>
+            <select class="form-input">
+              <option>Injured</option><option>Stray / Abandoned</option><option>Abused</option><option>Missing</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" placeholder="Describe the animal's condition, behavior, and any other relevant details...">Injured dog found near Dhanmondi Lake. Has a wound on its right leg. Appears scared but approachable.</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Image Upload</label>
+            <div style="border: 1px dashed var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 20px; text-align:center; font-size:12px; color:var(--color-text-secondary); cursor:pointer; background:var(--color-background-secondary);">
+              📷 Click to upload photo or drag & drop<br><span style="font-size:11px;">PNG, JPG up to 10MB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Location</div>
+          <div class="map-placeholder">
+            <div style="font-size:28px;">🗺</div>
+            <div>Map — Tap to set location</div>
+            <div style="font-size:11px; opacity:0.7;">Google Maps integration</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Address / Landmark</label>
+            <input class="form-input" type="text" value="Dhanmondi Lake, Road 27, Dhaka">
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+            <input type="checkbox" id="gps" checked>
+            <label for="gps" style="font-size:12px; color:var(--color-text-secondary);">Use GPS auto-location</label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Emergency Priority</div>
+          <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+              <input type="radio" name="priority" value="normal" checked> Normal
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+              <input type="radio" name="priority" value="high"> 🔴 High Priority
+            </label>
+          </div>
+          <button class="btn-primary" style="width:100%;" onclick="showSubmitConfirm()">Submit Report →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="submit-confirm" style="display:none;" class="card" style="border-color:#1D9E75;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; background:#E1F5EE; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px;">✓</div>
+        <div>
+          <div style="font-weight:500; font-size:14px;">Report submitted successfully!</div>
+          <div style="font-size:12px; color:var(--color-text-secondary);">Case ID generated: <strong style="font-family:monospace;">#AH-1043</strong> — You will receive notifications on case updates.</div>
+        </div>
+        <button class="btn-outline" style="margin-left:auto; font-size:12px;" onclick="showScreen('tracking')">Track Now →</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SCREEN 4: CASE TRACKING -->
+  <div class="screen" id="screen-tracking">
+    <div class="screen-label">Screen 04 — Case Tracking</div>
+    <div class="topbar">
+      <div class="logo"><div class="logo-dot">🐾</div> AnimalHub</div>
+      <div style="font-size:13px; color:var(--color-text-secondary);">Track Rescue Case</div>
+      <div class="user-pill"><div class="avatar">AR</div> Asif Raihan</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Case Search</div>
+      <div style="display:flex; gap:10px; align-items:flex-end;">
+        <div style="flex:1;">
+          <label class="form-label">Enter Case ID</label>
+          <input class="form-input" type="text" value="#AH-1042" style="font-family:monospace;">
+        </div>
+        <button class="btn-primary" style="height:38px; padding: 0 20px;">Search</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Case Information</div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+          <div style="width:44px; height:44px; background:#FAEEDA; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px;">🐕</div>
+          <div>
+            <div style="font-weight:500; font-size:14px;">Injured Dog</div>
+            <div style="font-size:12px; color:var(--color-text-secondary);">Reported by: Asif Raihan</div>
+          </div>
+          <span class="priority-badge priority-high" style="margin-left:auto;">High Priority</span>
+        </div>
+        <div class="info-row"><span class="info-row-label">Case ID</span><span style="font-family:monospace; font-size:12px;">#AH-1042</span></div>
+        <div class="info-row"><span class="info-row-label">Reported</span><span>Apr 14, 2026 — 10:22 AM</span></div>
+        <div class="info-row"><span class="info-row-label">Location</span><span>Dhanmondi Lake, Dhaka</span></div>
+        <div class="info-row"><span class="info-row-label">Assigned NGO</span><span style="color:#1D9E75;">Prani Welfare, Dhaka</span></div>
+        <div class="info-row"><span class="info-row-label">Current Status</span><span><span class="badge badge-amber">In Rescue</span></span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Rescue Timeline</div>
+        <div class="timeline-item">
+          <div class="tl-dot done"></div>
+          <div><div class="tl-label">Reported</div><div class="tl-meta">Apr 14 · 10:22 AM · Case ID generated</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-dot done"></div>
+          <div><div class="tl-label">Verified by Admin</div><div class="tl-meta">Apr 14 · 11:05 AM · Assigned to Prani Welfare</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-dot active"></div>
+          <div><div class="tl-label" style="color:#BA7517;">In Rescue</div><div class="tl-meta">Apr 14 · 2:30 PM · Team dispatched</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-dot pending"></div>
+          <div><div class="tl-label" style="color:var(--color-text-secondary);">Under Treatment</div><div class="tl-meta">Pending veterinarian assignment</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-dot pending"></div>
+          <div><div class="tl-label" style="color:var(--color-text-secondary);">Resolved</div><div class="tl-meta">—</div></div>
+        </div>
+        <div style="margin-top:8px;">
+          <div style="font-size:11px; color:var(--color-text-secondary); margin-bottom:4px;">Overall Progress</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" style="width:55%; background:#1D9E75;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SCREEN 5: ADOPTION -->
+  <div class="screen" id="screen-adoption">
+    <div class="screen-label">Screen 05 — Adoption Listing</div>
+    <div class="topbar">
+      <div class="logo"><div class="logo-dot">🐾</div> AnimalHub</div>
+      <div style="font-size:13px; color:var(--color-text-secondary);">Animals for Adoption</div>
+      <div class="user-pill"><div class="avatar">AR</div> Asif Raihan</div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+        <div style="flex:1; min-width:160px;">
+          <label class="form-label">Search animals</label>
+          <input class="form-input" type="text" placeholder="Name, breed, species...">
+        </div>
+        <div>
+          <label class="form-label">Species</label>
+          <select class="form-input" style="min-width:110px;"><option>All</option><option>Dogs</option><option>Cats</option><option>Birds</option></select>
+        </div>
+        <div>
+          <label class="form-label">Age</label>
+          <select class="form-input" style="min-width:100px;"><option>Any</option><option>Young</option><option>Adult</option><option>Senior</option></select>
+        </div>
+        <button class="btn-primary" style="height:38px; padding:0 18px;">Filter</button>
+      </div>
+    </div>
+
+    <div class="animal-grid">
+      <div class="animal-card">
+        <div class="animal-img" style="background:#FAEEDA;">🐕</div>
+        <div class="animal-body">
+          <div class="animal-name">Bruno</div>
+          <div class="animal-info">Labrador Mix · 2 yrs · Male</div>
+          <div style="font-size:11px; color:var(--color-text-secondary); margin-bottom:8px;">Rescued from Mirpur. Vaccinated & healthy.</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-teal">Available</span>
+            <button class="btn-primary" style="font-size:11px; padding:4px 12px;">Adopt</button>
+          </div>
+        </div>
+      </div>
+      <div class="animal-card">
+        <div class="animal-img" style="background:#E1F5EE;">🐈</div>
+        <div class="animal-body">
+          <div class="animal-name">Luna</div>
+          <div class="animal-info">Persian Mix · 1 yr · Female</div>
+          <div style="font-size:11px; color:var(--color-text-secondary); margin-bottom:8px;">Found in Gulshan. Friendly with children.</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-teal">Available</span>
+            <button class="btn-primary" style="font-size:11px; padding:4px 12px;">Adopt</button>
+          </div>
+        </div>
+      </div>
+      <div class="animal-card">
+        <div class="animal-img" style="background:#EAF3DE;">🐦</div>
+        <div class="animal-body">
+          <div class="animal-name">Kiwi</div>
+          <div class="animal-info">Parrot · 3 yrs · Unknown</div>
+          <div style="font-size:11px; color:var(--color-text-secondary); margin-bottom:8px;">Injured wing healed. Talks a little!</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-teal">Available</span>
+            <button class="btn-primary" style="font-size:11px; padding:4px 12px;">Adopt</button>
+          </div>
+        </div>
+      </div>
+      <div class="animal-card">
+        <div class="animal-img" style="background:#FAECE7;">🐕</div>
+        <div class="animal-body">
+          <div class="animal-name">Rocky</div>
+          <div class="animal-info">Street Dog · 4 yrs · Male</div>
+          <div style="font-size:11px; color:var(--color-text-secondary); margin-bottom:8px;">Calm, good with other pets.</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-amber">Under Review</span>
+            <button class="btn-outline" style="font-size:11px; padding:4px 12px;">View</button>
+          </div>
+        </div>
+      </div>
+      <div class="animal-card">
+        <div class="animal-img" style="background:#E6F1FB;">🐈</div>
+        <div class="animal-body">
+          <div class="animal-name">Mochi</div>
+          <div class="animal-info">Tabby · 6 mo · Female</div>
+          <div style="font-size:11px; color:var(--color-text-secondary); margin-bottom:8px;">Kitten rescued from Uttara. Playful.</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-teal">Available</span>
+            <button class="btn-primary" style="font-size:11px; padding:4px 12px;">Adopt</button>
+          </div>
+        </div>
+      </div>
+      <div class="animal-card">
+        <div class="animal-img" style="background:#FAEEDA;">🐕</div>
+        <div class="animal-body">
+          <div class="animal-name">Buddy</div>
+          <div class="animal-info">Mixed Breed · 1 yr · Male</div>
+          <div style="font-size:11px; color:var(--color-text-secondary); margin-bottom:8px;">Energetic pup. Needs active family.</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-blue">Pending</span>
+            <button class="btn-outline" style="font-size:11px; padding:4px 12px;">View</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SCREEN 6: ADMIN DASHBOARD -->
+  <div class="screen" id="screen-admin">
+    <div class="screen-label">Screen 06 — Admin Dashboard</div>
+    <div class="topbar">
+      <div class="logo"><div class="logo-dot">🐾</div> AnimalHub</div>
+      <div style="display:flex; gap:10px; font-size:12px; color:var(--color-text-secondary);">
+        <span style="color:#1D9E75; cursor:pointer;">Overview</span>
+        <span>·</span><span>Cases</span><span>·</span><span>Users</span><span>·</span><span>Reports</span>
+      </div>
+      <div class="user-pill"><div class="avatar" style="background:#CECBF6; color:#3C3489;">AD</div> Admin <span class="badge badge-coral">Admin</span></div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num s-coral">127</div><div class="stat-label">Total Cases</div></div>
+      <div class="stat-card"><div class="stat-num s-amber">18</div><div class="stat-label">Active Rescues</div></div>
+      <div class="stat-card"><div class="stat-num s-teal">94</div><div class="stat-label">Resolved</div></div>
+      <div class="stat-card"><div class="stat-num s-blue">342</div><div class="stat-label">Registered Users</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Pending Case Assignments</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Case ID</th><th>Type</th><th>Priority</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-family:monospace;font-size:12px;">#AH-1043</td>
+                <td>Injured Cat</td>
+                <td><span class="priority-badge priority-high">High</span></td>
+                <td><button class="btn-primary" style="font-size:11px; padding:3px 10px;">Assign</button></td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace;font-size:12px;">#AH-1044</td>
+                <td>Stray Dog</td>
+                <td><span class="priority-badge priority-normal">Normal</span></td>
+                <td><button class="btn-primary" style="font-size:11px; padding:3px 10px;">Assign</button></td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace;font-size:12px;">#AH-1045</td>
+                <td>Abused Animal</td>
+                <td><span class="priority-badge priority-high">High</span></td>
+                <td><button class="btn-primary" style="font-size:11px; padding:3px 10px;">Assign</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">System Analytics</div>
+        <div style="margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span>Cases Resolved This Month</span><span style="font-weight:500;">74%</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:74%; background:#1D9E75;"></div></div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span>Average Response Time</span><span style="font-weight:500;">2.4 hrs</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:60%; background:#EF9F27;"></div></div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span>Adoption Rate</span><span style="font-weight:500;">41%</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:41%; background:#185FA5;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span>Volunteer Utilization</span><span style="font-weight:500;">88%</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:88%; background:#639922;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recent User Activity</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Role</th><th>Action</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Asif Raihan</td><td><span class="badge badge-blue">Citizen</span></td><td>Submitted Report #AH-1043</td><td>5 min ago</td><td><span class="badge badge-amber">Pending</span></td></tr>
+            <tr><td>Prani Welfare</td><td><span class="badge badge-teal">NGO</span></td><td>Updated Case #AH-1042 → In Rescue</td><td>2 hrs ago</td><td><span class="badge badge-teal">Active</span></td></tr>
+            <tr><td>Dr. Karim</td><td><span class="badge badge-coral">Vet</span></td><td>Updated Medical Record — Case #AH-1040</td><td>4 hrs ago</td><td><span class="badge badge-teal">Done</span></td></tr>
+            <tr><td>Rahman Ali</td><td><span class="badge badge-green">Donor</span></td><td>Donated ৳2,500 to Rescue Fund</td><td>6 hrs ago</td><td><span class="badge badge-teal">Confirmed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SCREEN 7: DONATE -->
+  <div class="screen" id="screen-donate">
+    <div class="screen-label">Screen 07 — Donation System</div>
+    <div class="topbar">
+      <div class="logo"><div class="logo-dot">🐾</div> AnimalHub</div>
+      <div style="font-size:13px; color:var(--color-text-secondary);">Support Animal Welfare</div>
+      <div class="user-pill"><div class="avatar">AR</div> Asif Raihan</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title">Make a Donation</div>
+          <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+            <button class="btn-outline" style="font-size:12px; padding:6px 14px;">৳500</button>
+            <button class="btn-primary" style="font-size:12px; padding:6px 14px;">৳1,000</button>
+            <button class="btn-outline" style="font-size:12px; padding:6px 14px;">৳2,500</button>
+            <button class="btn-outline" style="font-size:12px; padding:6px 14px;">Custom</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Donation Amount (BDT)</label>
+            <input class="form-input" type="number" value="1000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Purpose</label>
+            <select class="form-input">
+              <option>General Rescue Fund</option>
+              <option>Medical Treatment</option>
+              <option>Shelter Maintenance</option>
+              <option>Specific Case: #AH-1042</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <select class="form-input">
+              <option>bKash</option><option>Nagad</option><option>Card</option><option>Bank Transfer</option>
+            </select>
+          </div>
+          <button class="btn-primary" style="width:100%;">Donate ৳1,000 →</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Donation Impact</div>
+          <div class="stat-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:12px;">
+            <div class="stat-card"><div class="stat-num s-teal">৳82K</div><div class="stat-label">Raised This Month</div></div>
+            <div class="stat-card"><div class="stat-num s-blue">156</div><div class="stat-label">Total Donors</div></div>
+          </div>
+          <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:10px;">Fund allocation transparency:</div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px;"><span>Medical Treatment</span><span>45%</span></div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:45%; background:#1D9E75;"></div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px;"><span>Rescue Operations</span><span>30%</span></div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:30%; background:#EF9F27;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px;"><span>Shelter & Food</span><span>25%</span></div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:25%; background:#378ADD;"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Recent Donations</div>
+          <div class="info-row"><span class="info-row-label">Rahman Ali</span><span style="color:#1D9E75; font-weight:500;">৳2,500</span></div>
+          <div class="info-row"><span class="info-row-label">Anonymous</span><span style="color:#1D9E75; font-weight:500;">৳1,000</span></div>
+          <div class="info-row"><span class="info-row-label">Nayem Hossain</span><span style="color:#1D9E75; font-weight:500;">৳500</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    var screenEl = document.getElementById('screen-' + id);
+    if (screenEl) screenEl.classList.add('visible');
+    var btns = document.querySelectorAll('.nav-btn');
+    var map = ['login','citizen','report','tracking','adoption','admin','donate'];
+    var idx = map.indexOf(id);
+    if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+  }
+
+  function showSubmitConfirm() {
+    var el = document.getElementById('submit-confirm');
+    if (el) { el.style.display = 'block'; }
+  }
+
+  document.querySelectorAll('.role-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
